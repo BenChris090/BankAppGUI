@@ -1,1 +1,32 @@
-[{"email": "joseph@gmail.com", "mobile_number": "08022299347", "password": "joseph", "account_name": "Joseph Ekugbo", "account_number": 9013249028, "account_balance": 5000, "transact_pin": "5555", "created at": "2022-04-11 12:30:46.086548"}, {"email": "kiingbugii@gmail.com", "mobile_number": "08126628535", "password": "onyeka", "account_name": "Enomfon Godwin", "account_number": 5426280165, "account_balance": 8999100000, "transact_pin": "1304", "created at": "2022-04-12 13:57:42.897326"}, {"email": "israeleffiong87@gmail.com", "mobile_number": "07038385784", "password": "alocal419A", "account_name": "Israel robert", "account_number": 5891711315, "account_balance": 50000, "transact_pin": "5555", "created at": "2022-04-12 14:28:37.012076"}]
+[
+    {
+        "email": "joseph@gmail.com",
+        "mobile_number": "08022299347",
+        "password": "joseph",
+        "account_name": "Joseph Ekugbo",
+        "account_number": 9013249028,
+        "account_balance": 5000,
+        "transact_pin": "5555",
+        "created at": "2022-04-11 12:30:46.086548"
+    },
+    {
+        "email": "kiingbugii@gmail.com",
+        "mobile_number": "08126628535",
+        "password": "onyeka",
+        "account_name": "Enomfon Godwin",
+        "account_number": 5426280165,
+        "account_balance": 8999100000,
+        "transact_pin": "1304",
+        "created at": "2022-04-12 13:57:42.897326"
+    },
+    {
+        "email": "israeleffiong87@gmail.com",
+        "mobile_number": "07038385784",
+        "password": "alocal419A",
+        "account_name": "Israel robert",
+        "account_number": 5891711315,
+        "account_balance": 50000,
+        "transact_pin": "5555",
+        "created at": "2022-04-12 14:28:37.012076"
+    }
+]

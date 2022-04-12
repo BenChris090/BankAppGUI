@@ -129,7 +129,7 @@ def Bank():
             elif depoPin.get().isdigit == False or depoPin.get() != user["transact_pin"]:
                 messagebox.showerror("Error", "Invalid Pin", parent = deposit)
             elif amnt.get().isdigit() == False or int(amnt.get()) < 1000:
-                messagebox.showerror("Error", "Invalid Amount", parent = deposit)
+                messagebox.showerror("Error", "Invalid Amount", parent = deposit) 
             else:
                 try:
                     amount = int(amnt.get())
@@ -260,11 +260,38 @@ def Bank():
 
         def leanBack():
             transfer.destroy()
+            Bank()
 
         def clearUp():
             beneficiary.delete('0', 'end')
             amntToTransfer.delete('0', 'end')
             transferPin.delete('0', 'end')
+
+        def confirmTransfer():
+            beneficiary1 = read_beneficiary(int(beneficiary.get()))
+            if beneficiary.get() == "" or amntToTransfer.get() == "" or transferPin.get() == "":
+                messagebox.showerror("Error", "All Fields Are Required",  parent = transfer)
+            elif transferPin.get().isdigit == False or transferPin.get() != user["transact_pin"]:
+                messagebox.showerror("Error", "Invalid Pin", parent = transfer)
+            elif amntToTransfer.get().isdigit() == False or int(amntToTransfer.get()) < 1000:
+                messagebox.showerror("Error", "Invalid Amount", parent = withdraw)
+            elif user["account_balance"] - int(amntToTransfer.get()) < 0:
+                messagebox.showerror("Error", "Insufficient Funds", parent = withdraw)
+            else:
+                try:
+                    accountNo = int(beneficiary.get())
+                    amount1 = int(amntToTransfer.get())
+                    pin1 = transferPin.get()
+
+                    result = withdrawNow(email1, accountNo, amount1, pin1)
+                    if result:
+                        messagebox.showinfo("Success", "{0} Transfered To {1} Successfully".format(amount1, beneficiary1["account_name"]), parent = withdraw)
+                        clearUp()
+                        leanBack()
+                    else:
+                        messagebox.showerror("Error", "Pin Is Invalid", parent = withdraw)
+                except Exception as  es:
+                    messagebox.showerror("Error", "Error Dui to : {0}".format(str(es)), parent = withdraw)
 
         transfer = Tk()
         transfer.title("Ice_Berg Mobile")
@@ -296,7 +323,7 @@ def Bank():
         transfPin = Entry(transfer, width = 40 , show = "*", textvariable = transferPin)
         transfPin.place(x = 200, y = 297)
 
-        btn_cnfrm = Button(transfer, text = "Confirm Transfer", font = "Candara 10 bold", command = "confirmWithdrawal") #command is missing
+        btn_cnfrm = Button(transfer, text = "Confirm Transfer", font = "Candara 10 bold", command = confirmTransfer) #command is missing
         btn_cnfrm.place(x = 200, y = 334)
 
         btn_clear = Button(transfer, text = "Clear", font = "Candara 10 bold", command = clearUp) #command is missing
@@ -324,7 +351,7 @@ def Bank():
     withdraw = Button(bank, text = "Withdraw From Your Acccount", font = "Candara 10 bold", padx=11, command = withdrawFunds)# awaiting action
     withdraw.place(x = 150, y = 303)
 
-    transfer = Button(bank, text = "Transfer To Another Acccount", font = "Candara 10 bold", padx=13, command = "action")# awaiting action
+    transfer = Button(bank, text = "Transfer To Another Acccount", font = "Candara 10 bold", padx=13, command = transferFunds)# awaiting action
     transfer.place(x = 150, y = 343)
 
     logOut = Button(window, text = "Switch To Sign Up", command = log_out) #command missing
