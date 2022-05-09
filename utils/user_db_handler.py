@@ -37,7 +37,8 @@ def create_user(fname, lname, email, mobile_number, password, pin):
             "account_number" : random.randint(1111111111,9999999999),
             "account_balance" : 0,
             "transact_pin" : pin,
-            "created at" : str(datetime.now())
+            "created at" : str(datetime.now()),
+            "is active" : "False"
         }
         users.append(user_dict) #add to dictionary
 
@@ -48,11 +49,32 @@ def create_user(fname, lname, email, mobile_number, password, pin):
 
 
 def login(email, password):
+    users = read_user()
     user = read_user(email)
     if user == {}:
         return False
     else:
-        return user["password"] == password
+        if user["password"] == password:
+            users.remove(user)
+            user["is active"] = "True"
+            users.append(user)
+            with open(DB_PATH, "w") as file:
+                json.dump(users, file)
+            return True
+
+def logout(email):
+    users = read_user()
+    user = read_user(email)
+    if user["is active"] == "True":
+        users.remove(user)
+        user["is active"] = "False"
+        users.append(user)
+        with open(DB_PATH, "w") as file:
+            json.dump(users, file)
+        return True
+    else:
+        return False
+
 
 
 def depositNow(email, amount, pin):
@@ -89,8 +111,6 @@ def withdrawNow(email, amount, pin):
 def transferNow(email, acNo, amount, pin):
     users = read_user()
     user = read_user(email)
-    userss = read_beneficiary()
-    userr = read_beneficiary(acNo)
     if user["transact_pin"] == pin:
         users.remove(user)
         user["account_balance"] = user["account_balance"] - amount
@@ -99,13 +119,18 @@ def transferNow(email, acNo, amount, pin):
         with open(DB_PATH, "w") as file:
             json.dump(users, file)
         
+        
+        userss = read_beneficiary()
+        userr = read_beneficiary(acNo)
         userss.remove(userr)
         userr["account_balance"] =  userr["account_balance"] + amount
         userss.append(userr) #add to users
 
         with open(DB_PATH, "w") as file:
             json.dump(userss, file)
+
         return True
+
     return False
 
 

@@ -4,36 +4,79 @@ from tkinter import messagebox
 import json
 from utils.user_db_handler import * # asteric sign(*) imports all
 
-def clear():
-    userentry.delete("0", "end")
-    passentry.delete("0", "end")
+def home():
+    def clear():
+        userentry.delete("0", "end")
+        passentry.delete("0", "end")
 
-def close():
-    window.destroy()
+    def close():
+        window.destroy()
 
-def login1():
-    if email.get() == "" or password.get() == "":
-        messagebox.showerror("Error", "Enter Email And Password", parent = window)
-    else:
-        try:
-            email1 = email.get()
-            passw = password.get()
+    def login1():
+        if email.get() == "" or password.get() == "":
+            messagebox.showerror("Error", "Enter Email And Password", parent = window)
+        else:
+            try:
+                email1 = email.get()
+                passw = password.get()
 
-            result = login(email1, passw)
-            if result:
-                messagebox.showinfo("Success", "Login success", parent = window)
-                Bank()
-            else:
-                messagebox.showerror("Error", "Login failure :  Invalid Email Or Password", parent = window)
-        except Exception as  es:
-            messagebox.showerror("Error", "Error Dui to : {0}".format(str(es)), parent = window)
+                result = login(email1, passw)
+                if result:
+                    messagebox.showinfo("Success", "Login success", parent = window)
+                    window.destroy()
+                    Bank()
+                else:
+                    messagebox.showerror("Error", "Login failure :  Invalid Email Or Password", parent = window)
+            except Exception as  es:
+                messagebox.showerror("Error", "Error Dui to : {0}".format(str(es)), parent = window)
+
+
+    window = Tk()#instantiation
+    window.title("Login Portal")
+    window.maxsize(width = 500,  height = 500)
+    window.minsize(width = 500,  height = 500)
+
+    heading = Label(window, text = "Login", font = "Candara 25 bold")
+    heading.place(x = 80, y = 150)
+
+    email = Label(window, text = "Email :", font = "Candara 10 bold")
+    email.place(x = 80, y = 220)
+
+    userpass = Label(window, text = "Password :", font = "Candara 10 bold")
+    userpass.place(x = 80, y = 260)
+
+    email = StringVar()
+    password = StringVar()
+
+    userentry = Entry(window, width = 40, textvariable = email)
+    userentry.focus()
+    userentry.place(x = 200, y = 223)
+
+    passentry = Entry(window, width = 40, show = "*", textvariable = password)
+    passentry.place(x = 200, y = 260)
+
+    btn_login = Button(window, text = "Login", font = "Candara 10 bold", command = login1) #command missing
+    btn_login.place(x = 200, y = 293)
+
+    btn_login = Button(window, text = "Clear", font = "Candara 10 bold", command = clear) #command missing
+    btn_login.place(x = 260, y = 293)
+
+    sign_up_btn = Button(window, text = "Switch To Sign Up", command = signup) #command missing
+    sign_up_btn.place(x = 350, y = 20)
+
+    window.mainloop()
+
 
 def Bank():
-    email1 = email.get()
-    passw = password.get()
+    users = read_user()
+    user = [user for user in  users if user["is active"] == "True"]
+    email1 = user[0]["email"]
+    passw = user[0]["password"]
     
     def log_out():
+        logout(email1)
         bank.destroy()
+        home()
 
     def account_info():
         bank.destroy()
@@ -128,7 +171,7 @@ def Bank():
                 messagebox.showerror("Error", "All Fields Are Required",  parent = deposit)
             elif depoPin.get().isdigit == False or depoPin.get() != user["transact_pin"]:
                 messagebox.showerror("Error", "Invalid Pin", parent = deposit)
-            elif amnt.get().isdigit() == False or int(amnt.get()) < 1000:
+            elif amnt.get().isdigit() == False or int(amnt.get()) < 500:
                 messagebox.showerror("Error", "Invalid Amount", parent = deposit) 
             else:
                 try:
@@ -178,7 +221,7 @@ def Bank():
         btn_clear = Button(deposit, text = "Clear", font = "Candara 10 bold", command = clean) #command is missing
         btn_clear.place(x = 300, y = 297)
 
-        switchLogin = Button(deposit, text = "Switch To Login", command = switchBack) #command is missing
+        switchLogin = Button(deposit, text = "<-- Back", command = switchBack) #command is missing
         switchLogin.place(x = 350, y = 20)
 
         deposit.mainloop()
@@ -200,7 +243,7 @@ def Bank():
                 messagebox.showerror("Error", "All Fields Are Required",  parent = withdraw)
             elif withdrawPin.get().isdigit == False or withdrawPin.get() != user["transact_pin"]:
                 messagebox.showerror("Error", "Invalid Pin", parent = withdraw)
-            elif amnt2.get().isdigit() == False or int(amnt2.get()) < 1000:
+            elif amnt2.get().isdigit() == False or int(amnt2.get()) < 500:
                 messagebox.showerror("Error", "Invalid Amount", parent = withdraw)
             elif user["account_balance"] - int(amnt2.get()) < 0:
                 messagebox.showerror("Error", "Insufficient Funds", parent = withdraw)
@@ -243,12 +286,12 @@ def Bank():
         withdrawPin.place(x = 200, y = 260)
 
         btn_cnfrm = Button(withdraw, text = "Confirm Withdrawal", font = "Candara 10 bold", command = confirmWithdrawal) #command is missing
-        btn_cnfrm.place(x = 200, y = 297)
+        btn_cnfrm.place(x = 170, y = 297)
 
         btn_clear = Button(withdraw, text = "Clear", font = "Candara 10 bold", command = cleanUp) #command is missing
         btn_clear.place(x = 300, y = 297)
 
-        rtrnBck = Button(withdraw, text = "Switch To Login", command = returnBack) #command is missing
+        rtrnBck = Button(withdraw, text = "<-- Back", command = returnBack) #command is missing
         rtrnBck.place(x = 360, y = 20)
 
         withdraw.mainloop()
@@ -265,33 +308,33 @@ def Bank():
         def clearUp():
             beneficiary.delete('0', 'end')
             amntToTransfer.delete('0', 'end')
-            transferPin.delete('0', 'end')
+            transfPin.delete('0', 'end')
 
         def confirmTransfer():
             beneficiary1 = read_beneficiary(int(beneficiary.get()))
-            if beneficiary.get() == "" or amntToTransfer.get() == "" or transferPin.get() == "":
+            if beneficiary.get() == "" or amntToTransfer.get() == "" or transfPin.get() == "":
                 messagebox.showerror("Error", "All Fields Are Required",  parent = transfer)
-            elif transferPin.get().isdigit == False or transferPin.get() != user["transact_pin"]:
+            elif transfPin.get().isdigit() == False or transfPin.get() != user["transact_pin"]:
                 messagebox.showerror("Error", "Invalid Pin", parent = transfer)
-            elif amntToTransfer.get().isdigit() == False or int(amntToTransfer.get()) < 1000:
-                messagebox.showerror("Error", "Invalid Amount", parent = withdraw)
+            elif amntToTransfer.get().isdigit() == False or int(amntToTransfer.get()) < 500:
+                messagebox.showerror("Error", "Invalid Amount", parent = transfer)
             elif user["account_balance"] - int(amntToTransfer.get()) < 0:
-                messagebox.showerror("Error", "Insufficient Funds", parent = withdraw)
+                messagebox.showerror("Error", "Insufficient Funds", parent = transfer)
             else:
                 try:
                     accountNo = int(beneficiary.get())
                     amount1 = int(amntToTransfer.get())
-                    pin1 = transferPin.get()
+                    pin1 = transfPin.get()
 
-                    result = withdrawNow(email1, accountNo, amount1, pin1)
+                    result = transferNow(email1, accountNo, amount1, pin1)
                     if result:
-                        messagebox.showinfo("Success", "{0} Transfered To {1} Successfully".format(amount1, beneficiary1["account_name"]), parent = withdraw)
+                        messagebox.showinfo("Success", "N{0} Transfered To {1} Successfully".format(amount1, beneficiary1["account_name"]), parent = transfer)
                         clearUp()
                         leanBack()
                     else:
-                        messagebox.showerror("Error", "Pin Is Invalid", parent = withdraw)
+                        messagebox.showerror("Error", "Pin Is Invalid", parent = transfer)
                 except Exception as  es:
-                    messagebox.showerror("Error", "Error Dui to : {0}".format(str(es)), parent = withdraw)
+                    messagebox.showerror("Error", "Error Dui to : {0}".format(str(es)), parent = transfer)
 
         transfer = Tk()
         transfer.title("Ice_Berg Mobile")
@@ -302,34 +345,34 @@ def Bank():
         heading.place(x = 40, y = 150)
 
         label0001 = Label(transfer, text = "Enter Beneficiary Account Number :", font = "Candara 10 bold")
-        label0001.place(x = 80, y = 220)
+        label0001.place(x = 30, y = 220)
         
         label0002 = Label(transfer, text = "Enter Amount To Transfer:", font = "Candara 10 bold")
-        label0002.place(x = 80, y = 260)
+        label0002.place(x = 30, y = 260)
 
         label0003 = Label(transfer, text = "Enter Your Transaction Pin :", font = "Candara 10 bold")
-        label0003.place(x = 80, y = 300)
+        label0003.place(x = 30, y = 300)
 
         beneficiaryAcNo = StringVar()
         tranferAmnt = StringVar()
         transferPin = StringVar()
 
-        beneficiary = Entry(transfer, width = 40, textvariable = beneficiaryAcNo)
-        beneficiary.place(x = 200, y = 223)
+        beneficiary = Entry(transfer, width = 35, textvariable = beneficiaryAcNo)
+        beneficiary.place(x = 250, y = 223)
 
-        amntToTransfer = Entry(transfer, width = 40, textvariable = tranferAmnt)
-        amntToTransfer.place(x = 200, y = 260)
+        amntToTransfer = Entry(transfer, width = 35, textvariable = tranferAmnt)
+        amntToTransfer.place(x = 250, y = 260)
 
-        transfPin = Entry(transfer, width = 40 , show = "*", textvariable = transferPin)
-        transfPin.place(x = 200, y = 297)
+        transfPin = Entry(transfer, width = 35 , show = "*", textvariable = transferPin)
+        transfPin.place(x = 250, y = 297)
 
         btn_cnfrm = Button(transfer, text = "Confirm Transfer", font = "Candara 10 bold", command = confirmTransfer) #command is missing
-        btn_cnfrm.place(x = 200, y = 334)
+        btn_cnfrm.place(x = 150, y = 334)
 
         btn_clear = Button(transfer, text = "Clear", font = "Candara 10 bold", command = clearUp) #command is missing
         btn_clear.place(x = 300, y = 334)
 
-        rtrnBck = Button(transfer, text = "Switch To Login", command = leanBack) #command is missing
+        rtrnBck = Button(transfer, text = "<-- Back", command = leanBack) #command is missing
         rtrnBck.place(x = 360, y = 20)
 
         transfer.mainloop()
@@ -354,7 +397,7 @@ def Bank():
     transfer = Button(bank, text = "Transfer To Another Acccount", font = "Candara 10 bold", padx=13, command = transferFunds)# awaiting action
     transfer.place(x = 150, y = 343)
 
-    logOut = Button(window, text = "Switch To Sign Up", command = log_out) #command missing
+    logOut = Button(bank, text = "LOG OUT", command = log_out) #command missing
     logOut.place(x = 350, y = 20)
 
 
@@ -472,37 +515,4 @@ def signup():
 
     registerwindow.mainloop()
 
-window = Tk()#instantiation
-window.title("Login Portal")
-window.maxsize(width = 500,  height = 500)
-window.minsize(width = 500,  height = 500)
-
-heading = Label(window, text = "Login", font = "Candara 25 bold")
-heading.place(x = 80, y = 150)
-
-email = Label(window, text = "Email :", font = "Candara 10 bold")
-email.place(x = 80, y = 220)
-
-userpass = Label(window, text = "Password :", font = "Candara 10 bold")
-userpass.place(x = 80, y = 260)
-
-email = StringVar()
-password = StringVar()
-
-userentry = Entry(window, width = 40, textvariable = email)
-userentry.focus()
-userentry.place(x = 200, y = 223)
-
-passentry = Entry(window, width = 40, show = "*", textvariable = password)
-passentry.place(x = 200, y = 260)
-
-btn_login = Button(window, text = "Login", font = "Candara 10 bold", command = login1) #command missing
-btn_login.place(x = 200, y = 293)
-
-btn_login = Button(window, text = "Clear", font = "Candara 10 bold", command = clear) #command missing
-btn_login.place(x = 260, y = 293)
-
-sign_up_btn = Button(window, text = "Switch To Sign Up", command = signup) #command missing
-sign_up_btn.place(x = 350, y = 20)
-
-window.mainloop()
+home()
