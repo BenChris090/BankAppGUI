@@ -1,16 +1,5 @@
 [
     {
-        "email": "israeleffiong87@gmail.com",
-        "mobile_number": "07038385784",
-        "password": "alocal419A",
-        "account_name": "Israel robert",
-        "account_number": 5891711315,
-        "account_balance": 51500,
-        "transact_pin": "6666",
-        "created at": "2022-04-12 14:28:37.012076",
-        "is active": "False"
-    },
-    {
         "email": "favourgodwinakpanudo@gmail.com",
         "mobile_number": "07067777493",
         "password": "26628535",
@@ -42,5 +31,29 @@
         "transact_pin": "5555",
         "created at": "2022-04-11 12:30:46.086548",
         "is active": "False"
+    },
+    {
+        "email": "israeleffiong87@gmail.com",
+        "mobile_number": "07038385784",
+        "password": "alocal419A",
+        "account_name": "Israel robert",
+        "account_number": 5891711315,
+        "account_balance": 51500,
+        "transact_pin": "6666",
+        "created at": "2022-04-12 14:28:37.012076",
+        "is active": "False"
+    },
+    {
+        "email": "johndoe@gmail.com",
+        "mobile_number": "09033377765",
+        "password": "pass",
+        "account_name": "John Doe",
+        "account_number": 9388154589,
+        "account_balance": 10000,
+        "transact_pin": "1234",
+        "security_question": "What Is Your Mother's Name",
+        "scurity_answer": "Dorris",
+        "created at": "2022-05-30 03:42:48.892466",
+        "is active": "True"
     }
 ]

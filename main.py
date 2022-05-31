@@ -2,6 +2,8 @@
 from tkinter import *
 from tkinter import messagebox
 import json
+
+from setuptools import Command
 from utils.user_db_handler import * # asteric sign(*) imports all
 
 def home():
@@ -11,14 +13,15 @@ def home():
 
     def close():
         window.destroy()
+        signup()
 
     def login1():
-        if email.get() == "" or password.get() == "":
+        if Email.get() == "" or Password.get() == "":
             messagebox.showerror("Error", "Enter Email And Password", parent = window)
         else:
             try:
-                email1 = email.get()
-                passw = password.get()
+                email1 = Email.get()
+                passw = Password.get()
 
                 result = login(email1, passw)
                 if result:
@@ -38,21 +41,23 @@ def home():
 
     heading = Label(window, text = "Login", font = "Candara 25 bold")
     heading.place(x = 80, y = 150)
-
+    
     email = Label(window, text = "Email :", font = "Candara 10 bold")
     email.place(x = 80, y = 220)
 
     userpass = Label(window, text = "Password :", font = "Candara 10 bold")
     userpass.place(x = 80, y = 260)
 
-    email = StringVar()
-    password = StringVar()
+    global Email
+    global Password
+    Email = StringVar()
+    Password = StringVar()
 
-    userentry = Entry(window, width = 40, textvariable = email)
+    userentry = Entry(window, width = 40, textvariable = Email)
     userentry.focus()
     userentry.place(x = 200, y = 223)
 
-    passentry = Entry(window, width = 40, show = "*", textvariable = password)
+    passentry = Entry(window, width = 40, show = "*", textvariable = Password)
     passentry.place(x = 200, y = 260)
 
     btn_login = Button(window, text = "Login", font = "Candara 10 bold", command = login1) #command missing
@@ -61,17 +66,15 @@ def home():
     btn_login = Button(window, text = "Clear", font = "Candara 10 bold", command = clear) #command missing
     btn_login.place(x = 260, y = 293)
 
-    sign_up_btn = Button(window, text = "Switch To Sign Up", command = signup) #command missing
+    sign_up_btn = Button(window, text = "Switch To Sign Up", command = close) #command missing
     sign_up_btn.place(x = 350, y = 20)
 
     window.mainloop()
 
 
 def Bank():
-    users = read_user()
-    user = [user for user in  users if user["is active"] == "True"]
-    email1 = user[0]["email"]
-    passw = user[0]["password"]
+    email1 = Email.get()
+    passw = Password.get()
     
     def log_out():
         logout(email1)
@@ -406,7 +409,7 @@ def Bank():
 
 def signup():
     def action():
-        if fname.get() == "" or lname.get() == "" or email.get() == "" or mobile_no.get() == "" or password.get == "" or very_pass.get() == "" or transact_pin.get() == "":
+        if fname.get() == "" or lname.get() == "" or email.get() == "" or mobile_no.get() == "" or password.get == "" or very_pass.get() == "" or transact_pin.get() == "" or securityQ.get() == "" or securityA.get() == "":
             messagebox.showerror("Error", "All Fields Are Required",  parent = registerwindow)
         elif '@' not in email.get():
             messagebox.showerror("Error", "Email Is Invalid", parent = registerwindow)
@@ -426,9 +429,11 @@ def signup():
                 mobile = mobile_no.get()
                 passw = password.get()
                 pin = transact_pin.get()
+                question = securityQ.get()
+                answer = securityA.get()
 
 
-                result = create_user(firsName, lasName, email1, mobile, passw, pin)
+                result = create_user(firsName, lasName, email1, mobile, passw, pin, question, answer)
                 if result:
                     messagebox.showinfo("Success", "Registration Successful", parent = registerwindow)
                     clear()
@@ -440,6 +445,7 @@ def signup():
 
     def switch():
         registerwindow.destroy()
+        home()
 
     def clear():
         email.delete("0", "end")
@@ -452,28 +458,34 @@ def signup():
     registerwindow.minsize(width = 500, height = 600)
 
     heading = Label(registerwindow, text = "Register", font = "Candara 25 bold")
-    heading.place(x = 80, y = 150)
+    heading.place(x = 60, y = 50)
 
     fname = Label(registerwindow, text = "First Name :", font = "Candara 10 bold")
-    fname.place(x = 80, y = 220)
+    fname.place(x = 60, y = 120)
 
     lname = Label(registerwindow, text = "Last Name :", font = "Candara 10 bold")
-    lname.place(x = 80, y = 260)
+    lname.place(x = 60, y = 160)
 
     email = Label(registerwindow, text = "Email :", font = "Candara 10 bold")
-    email.place(x = 80, y = 300)
+    email.place(x = 60, y = 200)
 
     mobile_no = Label(registerwindow, text = "Mobile Number :", font = "Candara 10 bold")
-    mobile_no.place(x = 80, y = 340)
+    mobile_no.place(x = 60, y = 240)
 
     password = Label(registerwindow, text = "Password :", font = "Candara 10 bold")
-    password.place(x = 80, y = 380)
+    password.place(x = 60, y = 280)
 
     very_pass = Label(registerwindow, text = "Verify Password :", font = "Candara 10 bold")
-    very_pass.place(x = 80, y = 420)
+    very_pass.place(x = 60, y = 320)
 
     transact_pin = Label(registerwindow, text = "Transaction Pin :", font = "Candara 10 bold")
-    transact_pin.place(x = 80, y = 460)
+    transact_pin.place(x = 60, y = 360)
+
+    securityQ = Label(registerwindow, text = "Set Security Question :", font = "Candara 10 bold")
+    securityQ.place(x = 60, y = 400)
+
+    securityA = Label(registerwindow, text = "Set Security Answer :", font = "Candara 10 bold")
+    securityA.place(x = 60, y = 440)
 
     fname = StringVar()
     lname = StringVar()
@@ -482,37 +494,46 @@ def signup():
     password = StringVar()
     very_pass = StringVar()
     transact_pin = StringVar()
+    securityQ = StringVar()
+    securityA = StringVar()
 
     fname = Entry(registerwindow, width = 40, textvariable = fname)
-    fname.place(x = 200, y = 223)
+    fname.place(x = 220, y = 123)
 
     lname = Entry(registerwindow, width = 40, textvariable = lname)
-    lname.place(x = 200, y = 260)
+    lname.place(x = 220, y = 160)
 
     email = Entry(registerwindow, width = 40, textvariable = email)
-    email.place(x = 200, y = 297)
+    email.place(x = 220, y = 197)
 
     mobile_no = Entry(registerwindow, width = 40, textvariable = mobile_no)
-    mobile_no.place(x = 200, y = 339)
+    mobile_no.place(x = 220, y = 239)
 
     password = Entry(registerwindow, width = 40, textvariable = password)
-    password.place(x = 200, y = 380)
+    password.place(x = 220, y = 280)
 
     very_pass = Entry(registerwindow, width = 40, textvariable = very_pass)
-    very_pass.place(x = 200, y = 418)
+    very_pass.place(x = 220, y = 318)
 
     transact_pin = Entry(registerwindow, width = 40, textvariable = transact_pin)
-    transact_pin.place(x = 200, y = 458)
+    transact_pin.place(x = 220, y = 358)
 
-    btn_signup = Button(registerwindow, text = "Signup", font = "Candara 10 bold", command = action) #command is missing
-    btn_signup.place(x = 200, y = 485)
+    securityQ = Entry(registerwindow, width = 40, textvariable = securityQ)
+    securityQ.place(x = 220, y = 398)
 
-    btn_login = Button(registerwindow, text = "Clear", font = "Candara 10 bold", command = clear) #command is missing
-    btn_login.place(x = 260, y = 485)
+    securityA = Entry(registerwindow, width = 40, textvariable = securityA)
+    securityA.place(x = 220, y = 438)
+
+    btn_signup = Button(registerwindow, width = 10, text = "Signup", font = "Candara 10 bold", command = action) #command is missing
+    btn_signup.place(x = 160, y = 475)
+
+    btn_login = Button(registerwindow, width = 10, text = "Clear", font = "Candara 10 bold", command = clear) #command is missing
+    btn_login.place(x = 260, y = 475)
 
     switchLogin = Button(registerwindow, text = "Switch To Login", command = switch) #command is missing
     switchLogin.place(x = 350, y = 20)
 
     registerwindow.mainloop()
+    
 
 home()

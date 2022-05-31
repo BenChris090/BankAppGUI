@@ -25,7 +25,7 @@ def read_beneficiary(acNo:int = None):
 
         return users
 
-def create_user(fname, lname, email, mobile_number, password, pin):
+def create_user(fname, lname, email, mobile_number, password, pin, question, answer):
     users = read_user()
     user = read_user(email)
     if user == {}:
@@ -37,6 +37,8 @@ def create_user(fname, lname, email, mobile_number, password, pin):
             "account_number" : random.randint(1111111111,9999999999),
             "account_balance" : 0,
             "transact_pin" : pin,
+            "security_question" : question,
+            "scurity_answer" : answer,
             "created at" : str(datetime.now()),
             "is active" : "False"
         }
@@ -133,7 +135,12 @@ def transferNow(email, acNo, amount, pin):
 
     return False
 
-
-
-# def reset_pass(pin, pass1):
     
+def reset_pass(email, ans, passw):
+    user = read_user(email)
+    if user["security_answer"] == ans:
+        user = read_user(email)
+        user["password"] = passw
+        return True
+    else:
+        return False
